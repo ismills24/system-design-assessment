@@ -11,11 +11,13 @@ const App: React.FC = () => {
       <div className="bg-pastelPeach min-h-screen">
         <header className="bg-softRed p-4 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="SoftServe Logo" className="w-auto h-16" />
+            <img src={logo} alt="SoftServe Logo" className="w-auto h-12 md:h-16" />
           </Link>
-          
-          {/* Hamburger menu */}
-          <HamburgerMenu />
+
+          {/* Hamburger menu for small screens */}
+          <div className="block md:hidden">
+            <HamburgerMenu />
+          </div>
         </header>
         <main className="p-4">
           <Routes>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import Comments from '../components/Comments';  // Import the Comments component
 
 interface Video {
   id: string;
@@ -13,7 +14,8 @@ const VideoPlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [video, setVideo] = useState<Video | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number>(0);  // Progress state for video playback
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -22,7 +24,7 @@ const VideoPlayer: React.FC = () => {
         setVideo(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to load video.');
+        console.error('Failed to load video', err);
         setLoading(false);
       }
     };
@@ -30,12 +32,16 @@ const VideoPlayer: React.FC = () => {
     fetchVideo();
   }, [id]);
 
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      setProgress((currentTime / duration) * 100);  // Calculate video progress as percentage
+    }
+  };
+
   if (loading) {
     return <div>Loading video...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
   }
 
   return (
@@ -44,10 +50,27 @@ const VideoPlayer: React.FC = () => {
         <>
           <h2 className="text-3xl font-bold text-softRed mb-4">{video.title}</h2>
           <p className="text-softOrange mb-6">{video.description}</p>
-          <video autoPlay width="100%" height="auto" controls className="rounded-lg shadow-lg">
+          <video
+            ref={videoRef}
+            width="100%"
+            height="auto"
+            controls
+            autoPlay
+            className="rounded-lg shadow-lg"
+            onTimeUpdate={handleTimeUpdate}
+          >
             <source src={video.videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
+          <div className="w-full h-2 bg-gray-200 rounded mt-4">
+            <div
+              className="h-full bg-softRed rounded"
+              style={{ width: `${progress}%` }}  // Progress bar width based on video progress
+            ></div>
+          </div>
+
+          {/* Comments Section */}
+          <Comments videoId={id!} />  {/* Pass the video ID to the Comments component */}
         </>
       )}
     </div>

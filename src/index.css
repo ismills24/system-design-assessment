@@ -81,3 +81,17 @@
   .ml-2 {
     margin-left: 8px;
   }
+  button {
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #f4978e;
+  }
+  a {
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: #ffdab9;
+  }

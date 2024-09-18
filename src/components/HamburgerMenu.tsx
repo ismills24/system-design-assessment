@@ -10,41 +10,50 @@ const HamburgerMenu: React.FC = () => {
   };
 
   return (
-    <div className="relative">
-      <button
+<div className="relative">
+  <button
+    onClick={toggleMenu}
+    aria-label={isOpen ? 'Close menu' : 'Open menu'}
+    className="text-white text-3xl focus:outline-none"
+    aria-expanded={isOpen}
+  >
+    {isOpen ? <FiX /> : <FiMenu />}
+  </button>
+
+  {isOpen && (
+    <div
+      className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-lg z-20"
+      role="menu"
+      aria-label="Main menu"
+    >
+      <Link
+        to="/"
+        className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
         onClick={toggleMenu}
-        className="text-white text-3xl focus:outline-none"
+        role="menuitem"
       >
-        {isOpen ? <FiX /> : <FiMenu />}
-      </button>
-      
-      {/* Menu dropdown */}
-      {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-lg z-20">
-          <Link
-            to="/"
-            className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
-            onClick={toggleMenu}
-          >
-            Home
-          </Link>
-          <Link
-            to="/about"
-            className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
-            onClick={toggleMenu}
-          >
-            About
-          </Link>
-          <Link
-            to="/contact"
-            className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
-            onClick={toggleMenu}
-          >
-            Contact Us
-          </Link>
-        </div>
-      )}
+        Home
+      </Link>
+      <Link
+        to="/about"
+        className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
+        onClick={toggleMenu}
+        role="menuitem"
+      >
+        About
+      </Link>
+      <Link
+        to="/contact"
+        className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
+        onClick={toggleMenu}
+        role="menuitem"
+      >
+        Contact Us
+      </Link>
     </div>
+  )}
+</div>
+
   );
 };
 
