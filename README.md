@@ -36,48 +36,47 @@ src/
 Getting Started
 To run this project locally, follow these steps:
 
-Prerequisites
+# Prerequisites
 Node.js (v16.x or higher)
 npm (v7.x or higher) or yarn
-Installation
-Clone the repository:
+# Installation
+1. Clone the repository:
 
-bash
+```bash
 Copy code
 git clone https://github.com/your-username/softserve-frontend.git
 cd softserve-frontend
-Install dependencies:
+```
 
-bash
-Copy code
+2. Install dependencies:
+
+```bash
 npm install
-Set up environment variables:
+```
+3. Set up environment variables:
 
 Create a .env file in the root of the project and add your Auth0 configuration and backend API URL.
 
-bash
+```bash
 Copy code
 REACT_APP_BACKEND_URL=http://localhost:5000
 REACT_APP_AUTH0_DOMAIN=your-auth0-domain
 REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
 REACT_APP_AUTH0_AUDIENCE=https://your-api.com
-Run the development server:
+```
+4. Run the development server:
 
-bash
+```bash
 Copy code
 npm start
 The app will be available at http://localhost:3000.
+```
 
-Available Scripts
-npm start: Runs the app in development mode.
-npm run build: Builds the app for production.
-npm run lint: Runs ESLint for code linting.
-npm run format: Runs Prettier to format the code.
-Authentication
+# Authentication
 This project uses Auth0 for authentication and authorization. You can sign in or sign up, and after authentication, you will be redirected back to your last visited page.
 
-Setting Up Auth0
-Sign up at Auth0.
-Create a new application, select "Single Page Application."
-Get your Domain, Client ID, and Audience, and add them to the .env file.
-Set the callback URL in Auth0 to http://localhost:3000 for local development.
+# Setting Up Auth0
+1. Sign up at Auth0.
+2. Create a new application, select "Single Page Application."
+3. Get your Domain, Client ID, and Audience, and add them to the .env file.
+4. Set the callback URL in Auth0 to http://localhost:3000 for local development.
