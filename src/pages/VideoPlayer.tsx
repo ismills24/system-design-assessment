@@ -1,26 +1,51 @@
+// VideoPlayer.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import Comments from '../components/Comments';  // Import the Comments component
+import Comments from '../components/Comments';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface Video {
   id: string;
   title: string;
   description: string;
   videoUrl: string;
+  comments: Comment[];
+}
+
+interface Comment {
+  id: string;
+  content: string;
+  User: {
+    displayName: string;
+  };
 }
 
 const VideoPlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [video, setVideo] = useState<Video | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);  // Progress state for video playback
+  const [progress, setProgress] = useState<number>(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const response = await axios.get(`https://66eb096555ad32cda47b7623.mockapi.io/videos/${id}`);
+        let config = {};
+        
+        // If the user is authenticated, get the access token and set the Authorization header
+        if (isAuthenticated) {
+          const token = await getAccessTokenSilently();
+          config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+        }
+
+        // Fetch the video data
+        const response = await axios.get(`http://localhost:5000/api/videos/${id}`, config);
         setVideo(response.data);
         setLoading(false);
       } catch (err) {
@@ -30,13 +55,13 @@ const VideoPlayer: React.FC = () => {
     };
 
     fetchVideo();
-  }, [id]);
+  }, [id, getAccessTokenSilently, isAuthenticated]);
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
-      setProgress((currentTime / duration) * 100);  // Calculate video progress as percentage
+      setProgress((currentTime / duration) * 100);
     }
   };
 
@@ -65,12 +90,10 @@ const VideoPlayer: React.FC = () => {
           <div className="w-full h-2 bg-gray-200 rounded mt-4">
             <div
               className="h-full bg-softRed rounded"
-              style={{ width: `${progress}%` }}  // Progress bar width based on video progress
+              style={{ width: `${progress}%` }}
             ></div>
           </div>
-
-          {/* Comments Section */}
-          <Comments videoId={id!} />  {/* Pass the video ID to the Comments component */}
+          {<Comments videoId={video.id} />}
         </>
       )}
     </div>

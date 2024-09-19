@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import VideoCard from './VideoCard';
 import SkeletonCard from './SkeletonCard';
-import { useSearch } from '../hooks/useSearch';  // Import the custom hook
+import { useSearch } from '../hooks/useSearch';
+import { useAuth0 } from '@auth0/auth0-react';
 
 interface Video {
   id: string;
   title: string;
   description: string;
   thumbnail: string;
+  views: number;
+  uploadDate: string; // or Date
+  videoUrl: string;
   isFavorite?: boolean;
 }
 
@@ -18,39 +22,66 @@ const VideoList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
 
-  const { searchTerm, setSearchTerm, filteredItems } = useSearch(videos);  // Use the custom hook
+  const { searchTerm, setSearchTerm, filteredItems } = useSearch(videos);
+  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await axios.get('https://66eb096555ad32cda47b7623.mockapi.io/videos');
-        const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '{}');
-        const videosWithFavorites = response.data.map((video: Video) => ({
-          ...video,
-          isFavorite: storedFavorites[video.id] || false,
-        }));
-        setVideos(videosWithFavorites);
+        // Fetch videos without requiring authentication
+        const videosResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/videos`);
+        let videosData = videosResponse.data;
+
+        // If the user is authenticated, fetch favorites
+        if (isAuthenticated) {
+          const token = await getAccessTokenSilently();
+          const favoritesResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/videos/favorites`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const favoriteIds = favoritesResponse.data.map((video: Video) => video.id);
+
+          // Mark the videos that are favorited
+          videosData = videosData.map((video: Video) => ({
+            ...video,
+            isFavorite: favoriteIds.includes(video.id),
+          }));
+        }
+
+        setVideos(videosData);
         setLoading(false);
       } catch (err) {
+        console.error('Failed to load videos:', err);
         setError('Failed to load videos.');
         setLoading(false);
       }
     };
 
     fetchVideos();
-  }, []);
+  }, [getAccessTokenSilently, isAuthenticated]);
 
-  const toggleFavorite = (id: string) => {
-    const updatedVideos = videos.map(video =>
-      video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
-    );
-    setVideos(updatedVideos);
+  const toggleFavorite = async (id: string) => {
+    try {
+      if (!isAuthenticated) {
+        loginWithRedirect();
+        return;
+      }
+      const token = await getAccessTokenSilently();
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/videos/${id}/favorite`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const favorites = updatedVideos.reduce((acc, video) => {
-      if (video.isFavorite) acc[video.id] = true;
-      return acc;
-    }, {} as Record<string, boolean>);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+      // Update local state
+      const updatedVideos = videos.map(video =>
+        video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
+      );
+      setVideos(updatedVideos);
+    } catch (err) {
+      console.error('Failed to update favorite status', err);
+    }
   };
 
   const filteredVideos = filteredItems.filter(video => !showFavorites || video.isFavorite);
@@ -84,7 +115,13 @@ const VideoList: React.FC = () => {
         {/* Favorites Toggle Button */}
         <button
           className="ml-4 bg-softRed text-white py-2 px-4 rounded"
-          onClick={() => setShowFavorites(!showFavorites)}
+          onClick={() => {
+            if (!isAuthenticated) {
+              loginWithRedirect();
+            } else {
+              setShowFavorites(!showFavorites);
+            }
+          }}
         >
           {showFavorites ? 'Show All Videos' : 'Show Favorites'}
         </button>

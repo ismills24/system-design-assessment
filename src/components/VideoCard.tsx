@@ -8,6 +8,7 @@ interface VideoCardProps {
     id: string;
     title: string;
     thumbnail: string;
+    views: number;
     isFavorite?: boolean;
   };
   toggleFavorite: () => void;
@@ -41,6 +42,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
         </LazyLoad>
         <div className="p-4">
           <h3 className="text-lg font-semibold text-softRed">{video.title}</h3>
+          <p className="text-sm text-gray-600">{video.views} views</p>
         </div>
       </Link>
 
