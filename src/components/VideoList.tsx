@@ -1,9 +1,10 @@
+// VideoList.tsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import VideoCard from './VideoCard';
 import SkeletonCard from './SkeletonCard';
 import { useSearch } from '../hooks/useSearch';
 import { useAuth0 } from '@auth0/auth0-react';
+import { fetchAllVideos, fetchFavoriteVideos, toggleFavoriteVideo } from '../services/videoService';
 
 interface Video {
   id: string;
@@ -11,7 +12,7 @@ interface Video {
   description: string;
   thumbnail: string;
   views: number;
-  uploadDate: string; // or Date
+  uploadDate: string;
   videoUrl: string;
   isFavorite?: boolean;
 }
@@ -28,26 +29,23 @@ const VideoList: React.FC = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        // Fetch videos without requiring authentication
-        const videosResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/videos`);
-        let videosData = videosResponse.data;
+        const videosData = await fetchAllVideos();
+        let updatedVideos = videosData;
 
-        // If the user is authenticated, fetch favorites
+        // If the user is authenticated, fetch favorites and mark them
         if (isAuthenticated) {
           const token = await getAccessTokenSilently();
-          const favoritesResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/videos/favorites`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const favoriteIds = favoritesResponse.data.map((video: Video) => video.id);
+          const favoriteVideos = await fetchFavoriteVideos(token);
+          const favoriteIds = favoriteVideos.map((video: Video) => video.id);
 
           // Mark the videos that are favorited
-          videosData = videosData.map((video: Video) => ({
+          updatedVideos = videosData.map((video: Video) => ({
             ...video,
             isFavorite: favoriteIds.includes(video.id),
           }));
         }
 
-        setVideos(videosData);
+        setVideos(updatedVideos);
         setLoading(false);
       } catch (err) {
         console.error('Failed to load videos:', err);
@@ -66,16 +64,10 @@ const VideoList: React.FC = () => {
         return;
       }
       const token = await getAccessTokenSilently();
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/videos/${id}/favorite`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await toggleFavoriteVideo(id, token);
 
       // Update local state
-      const updatedVideos = videos.map(video =>
+      const updatedVideos = videos.map((video) =>
         video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
       );
       setVideos(updatedVideos);
@@ -84,7 +76,7 @@ const VideoList: React.FC = () => {
     }
   };
 
-  const filteredVideos = filteredItems.filter(video => !showFavorites || video.isFavorite);
+  const filteredVideos = filteredItems.filter((video) => !showFavorites || video.isFavorite);
 
   if (loading) {
     return (
@@ -103,16 +95,14 @@ const VideoList: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        {/* Search Bar */}
         <input
           type="text"
           placeholder="Search videos..."
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="p-2 border border-softRed rounded-lg w-1/2"
         />
 
-        {/* Favorites Toggle Button */}
         <button
           className="ml-4 bg-softRed text-white py-2 px-4 rounded"
           onClick={() => {
@@ -129,17 +119,11 @@ const VideoList: React.FC = () => {
 
       <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filteredVideos.length > 0 ? (
-          filteredVideos.map(video => (
-            <VideoCard
-              key={video.id}
-              video={video}
-              toggleFavorite={() => toggleFavorite(video.id)}
-            />
+          filteredVideos.map((video) => (
+            <VideoCard key={video.id} video={video} toggleFavorite={() => toggleFavorite(video.id)} />
           ))
         ) : (
-          <div className="text-softRed text-lg">
-            No videos match your search.
-          </div>
+          <div className="text-softRed text-lg">No videos match your search.</div>
         )}
       </div>
     </div>

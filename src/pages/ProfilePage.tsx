@@ -1,55 +1,19 @@
 // ProfilePage.tsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { useState } from 'react';
+import useProfile from '../hooks/useProfiles';
 
 const ProfilePage: React.FC = () => {
-  const { getAccessTokenSilently } = useAuth0();
-  const [displayName, setDisplayName] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  // Fetch profile data from your backend
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await getAccessTokenSilently();
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setDisplayName(response.data.displayName);
-      } catch (error) {
-        console.error('Failed to fetch profile:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, [getAccessTokenSilently]);
+  const { profile, loading, updateProfile } = useProfile();
+  const [displayName, setDisplayName] = useState(profile?.displayName || '');
 
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayName(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const token = await getAccessTokenSilently();
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users/updateProfile`,
-        { displayName },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert('Profile updated successfully!');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Failed to update profile. Please try again.');
+    if (displayName) {
+      updateProfile(displayName);
     }
   };
 

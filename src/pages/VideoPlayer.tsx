@@ -1,61 +1,14 @@
 // VideoPlayer.tsx
-import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import React, { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Comments from '../components/Comments';
-import { useAuth0 } from '@auth0/auth0-react';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  videoUrl: string;
-  comments: Comment[];
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  User: {
-    displayName: string;
-  };
-}
+import { useVideos } from '../hooks/useVideos';
 
 const VideoPlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [video, setVideo] = useState<Video | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { video, loading, error } = useVideos(id!);
   const [progress, setProgress] = useState<number>(0);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-
-  useEffect(() => {
-    const fetchVideo = async () => {
-      try {
-        let config = {};
-        
-        // If the user is authenticated, get the access token and set the Authorization header
-        if (isAuthenticated) {
-          const token = await getAccessTokenSilently();
-          config = {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          };
-        }
-
-        // Fetch the video data
-        const response = await axios.get(`http://localhost:5000/api/videos/${id}`, config);
-        setVideo(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load video', err);
-        setLoading(false);
-      }
-    };
-
-    fetchVideo();
-  }, [id, getAccessTokenSilently, isAuthenticated]);
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
@@ -67,6 +20,10 @@ const VideoPlayer: React.FC = () => {
 
   if (loading) {
     return <div>Loading video...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
@@ -88,12 +45,9 @@ const VideoPlayer: React.FC = () => {
             Your browser does not support the video tag.
           </video>
           <div className="w-full h-2 bg-gray-200 rounded mt-4">
-            <div
-              className="h-full bg-softRed rounded"
-              style={{ width: `${progress}%` }}
-            ></div>
+            <div className="h-full bg-softRed rounded" style={{ width: `${progress}%` }}></div>
           </div>
-          {<Comments videoId={video.id} />}
+          <Comments videoId={video.id} />
         </>
       )}
     </div>
