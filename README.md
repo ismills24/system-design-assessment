@@ -32,6 +32,7 @@ src/
 ├── App.tsx          # Main application component
 ├── index.tsx        # Entry point for the React app
 └── styles/          # Global styles
+```
 Getting Started
 To run this project locally, follow these steps:
 
