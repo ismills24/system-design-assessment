@@ -43,7 +43,6 @@ npm (v7.x or higher) or yarn
 1. Clone the repository:
 
 ```bash
-Copy code
 git clone https://github.com/your-username/softserve-frontend.git
 cd softserve-frontend
 ```
@@ -58,7 +57,6 @@ npm install
 Create a .env file in the root of the project and add your Auth0 configuration and backend API URL.
 
 ```bash
-Copy code
 REACT_APP_BACKEND_URL=http://localhost:5000
 REACT_APP_AUTH0_DOMAIN=your-auth0-domain
 REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
@@ -67,7 +65,6 @@ REACT_APP_AUTH0_AUDIENCE=https://your-api.com
 4. Run the development server:
 
 ```bash
-Copy code
 npm start
 The app will be available at http://localhost:3000.
 ```
