@@ -1,3 +1,4 @@
+// VideoCard.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -9,9 +10,9 @@ type VideoCardProps = {
     title: string;
     thumbnail: string;
     views: number;
-    isFavorite?: boolean;
+    isFavorite?: boolean; // Optional boolean to track if the video is favorited
   };
-  toggleFavorite: () => void;
+  toggleFavorite: () => void; // Function to handle favoriting/unfavoriting
 };
 
 const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
@@ -55,7 +56,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
 
   const handleImageError = () => {
     setLoading(false);
-    console.error('Failed to load image:', video.thumbnail);
   };
 
   return (
@@ -88,8 +88,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
       <button
         onClick={toggleFavorite}
         className="absolute top-2 right-2 text-three text-xl"
+        aria-label={video.isFavorite ? 'Unfavorite' : 'Favorite'}
       >
-        {video.isFavorite ? <AiFillHeart /> : <AiOutlineHeart />}
+        {video.isFavorite ? <AiFillHeart className="text-red-500" /> : <AiOutlineHeart />}
       </button>
     </div>
   );

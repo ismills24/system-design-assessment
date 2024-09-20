@@ -41,14 +41,18 @@ export const fetchVideos = async (
         },
       }
     : {};
-
+const params = {
+  page,
+  limit,
+  searchTerm,
+  showFavorites
+};
   const response = await axios.get(`${API_URL}/api/videos`, {
     params: {
       page,
       limit,
       searchTerm,
-      showFavorites,
-      userAuth0Id: token ? undefined : '', // Include userAuth0Id if user is authenticated
+      showFavorites
     },
     ...config,
   });

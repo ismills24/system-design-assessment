@@ -1,3 +1,4 @@
+// VideoList.tsx
 import React, { useEffect, useState, FormEvent } from 'react';
 import { fetchVideos, toggleFavoriteVideo, Video } from '../services/videoService';
 import VideoCard from './VideoCard';
@@ -16,14 +17,37 @@ const VideoList: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>('');
 
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(videos);
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
+
+  useEffect(() => {
+    if (isLoading) {
+      // Auth0 is still determining if the user is authenticated
+      return;
+    }
+
+    // Reset state when dependencies change
+    setVideos([]);
+    setPage(1);
+    setHasMore(true);
+    setLoading(true);
+
+    // Fetch initial videos
+    fetchMoreVideos();
+
+    // Disable body scrolling when this component is mounted
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [searchTerm, showFavorites, isLoading]);
 
   const fetchMoreVideos = async () => {
     try {
+      console.log('am I authenticated yet?', isAuthenticated);
       const token = isAuthenticated ? await getAccessTokenSilently() : undefined;
       const limit = 20;
+      console.log('fetching videos', {page, limit, searchTerm, showFavorites, token});
       const response = await fetchVideos(page, limit, searchTerm, showFavorites, token);
-
       if (response.videos.length === 0) {
         setHasMore(false);
       } else {
@@ -39,20 +63,6 @@ const VideoList: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    setVideos([]);
-    setPage(1);
-    setHasMore(true);
-    setLoading(true);
-
-    // Fetch initial videos
-    fetchMoreVideos();
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [searchTerm, showFavorites]);
-
   const toggleFavorite = async (id: string) => {
     try {
       if (!isAuthenticated) {
@@ -60,12 +70,18 @@ const VideoList: React.FC = () => {
         return;
       }
       const token = await getAccessTokenSilently();
+
+      console.log('Toggling favorite for video ID:', id);
       await toggleFavoriteVideo(id, token);
 
       setVideos((prevVideos) =>
-        prevVideos.map((video) =>
-          video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
-        )
+        prevVideos.map((video) => {
+          if (video.id === id) {
+            console.log(`Toggled favorite status for video ID ${id}:`, !video.isFavorite);
+            return { ...video, isFavorite: !video.isFavorite };
+          }
+          return video;
+        })
       );
     } catch (err) {
       console.error('Failed to update favorite status', err);
@@ -96,7 +112,7 @@ const VideoList: React.FC = () => {
     <div
       id="scrollableDiv"
       className="overflow-auto h-screen px-4"
-      style={{ maxHeight: '100vh' }} // Ensures the container uses the full height of the viewport
+      style={{ maxHeight: '100vh' }}
     >
       <div className="flex flex-wrap items-center gap-4 mb-4">
         <form onSubmit={handleSearchSubmit} className="flex-grow flex">
@@ -107,10 +123,7 @@ const VideoList: React.FC = () => {
             onChange={(e) => setSearchValue(e.target.value)}
             className="p-2 border border-one rounded-lg flex-1"
           />
-          <button
-            type="submit"
-            className="ml-2 bg-one text-white py-2 px-4 rounded"
-          >
+          <button type="submit" className="ml-2 bg-one text-white py-2 px-4 rounded">
             Search
           </button>
         </form>
@@ -139,7 +152,7 @@ const VideoList: React.FC = () => {
         <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {filteredItems.map((video, index) => (
             <VideoCard
-              key={`${video.id}-${index}`} // Ensures unique keys
+              key={`${video.id}-${index}`}
               video={video}
               toggleFavorite={() => toggleFavorite(video.id)}
             />
