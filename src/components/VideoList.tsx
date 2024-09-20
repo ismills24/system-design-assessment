@@ -1,61 +1,51 @@
-// VideoList.tsx
 import React, { useEffect, useState } from 'react';
+import { fetchVideos, toggleFavoriteVideo, Video } from '../services/videoService';
 import VideoCard from './VideoCard';
 import SkeletonCard from './SkeletonCard';
 import { useSearch } from '../hooks/useSearch';
 import { useAuth0 } from '@auth0/auth0-react';
-import { fetchAllVideos, fetchFavoriteVideos, toggleFavoriteVideo } from '../services/videoService';
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  views: number;
-  uploadDate: string;
-  videoUrl: string;
-  isFavorite?: boolean;
-}
 
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(videos);
   const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const videosData = await fetchAllVideos();
-        let updatedVideos = videosData;
+  const fetchMoreVideos = async () => {
+    try {
+      const token = isAuthenticated ? await getAccessTokenSilently() : undefined;
+      const limit = 10;
+      const response = await fetchVideos(page, limit, searchTerm, showFavorites, token);
 
-        // If the user is authenticated, fetch favorites and mark them
-        if (isAuthenticated) {
-          const token = await getAccessTokenSilently();
-          const favoriteVideos = await fetchFavoriteVideos(token);
-          const favoriteIds = favoriteVideos.map((video: Video) => video.id);
-
-          // Mark the videos that are favorited
-          updatedVideos = videosData.map((video: Video) => ({
-            ...video,
-            isFavorite: favoriteIds.includes(video.id),
-          }));
-        }
-
-        setVideos(updatedVideos);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to load videos:', err);
-        setError('Failed to load videos.');
-        setLoading(false);
+      if (response.videos.length === 0) {
+        setHasMore(false);
+      } else {
+        setVideos((prevVideos) => [...prevVideos, ...response.videos]);
+        setPage((prevPage) => prevPage + 1);
       }
-    };
 
-    fetchVideos();
-  }, [getAccessTokenSilently, isAuthenticated]);
+      setLoading(false);
+    } catch (err) {
+      console.error('Failed to load videos:', err);
+      setError('Failed to load videos.');
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchMoreVideos();
+    // Disable body scrolling when this component is mounted
+    document.body.style.overflow = 'hidden';
+
+    // Re-enable body scrolling when this component is unmounted
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [getAccessTokenSilently, isAuthenticated, searchTerm, showFavorites]);
 
   const toggleFavorite = async (id: string) => {
     try {
@@ -66,19 +56,17 @@ const VideoList: React.FC = () => {
       const token = await getAccessTokenSilently();
       await toggleFavoriteVideo(id, token);
 
-      // Update local state
-      const updatedVideos = videos.map((video) =>
-        video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
+      setVideos((prevVideos) =>
+        prevVideos.map((video) =>
+          video.id === id ? { ...video, isFavorite: !video.isFavorite } : video
+        )
       );
-      setVideos(updatedVideos);
     } catch (err) {
       console.error('Failed to update favorite status', err);
     }
   };
 
-  const filteredVideos = filteredItems.filter((video) => !showFavorites || video.isFavorite);
-
-  if (loading) {
+  if (loading && page === 1) {
     return (
       <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {[...Array(6)].map((_, index) => (
@@ -93,7 +81,16 @@ const VideoList: React.FC = () => {
   }
 
   return (
-    <div>
+    <div
+      onScroll={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.scrollHeight - target.scrollTop === target.clientHeight && hasMore) {
+          fetchMoreVideos();
+        }
+      }}
+      className="overflow-auto h-screen px-4"
+      style={{ maxHeight: '100vh' }} // Ensures the container uses the full height of the viewport
+    >
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
@@ -118,14 +115,15 @@ const VideoList: React.FC = () => {
       </div>
 
       <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredVideos.length > 0 ? (
-          filteredVideos.map((video) => (
-            <VideoCard key={video.id} video={video} toggleFavorite={() => toggleFavorite(video.id)} />
-          ))
-        ) : (
-          <div className="text-softRed text-lg">No videos match your search.</div>
-        )}
+        {filteredItems.map((video) => (
+          <VideoCard
+            key={video.id}
+            video={video}
+            toggleFavorite={() => toggleFavorite(video.id)}
+          />
+        ))}
       </div>
+      {loading && <p>Loading more videos...</p>}
     </div>
   );
 };
