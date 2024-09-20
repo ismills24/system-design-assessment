@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { fetchVideos, toggleFavoriteVideo, Video } from '../services/videoService';
 import VideoCard from './VideoCard';
 import SkeletonCard from './SkeletonCard';
 import { useSearch } from '../hooks/useSearch';
 import { useAuth0 } from '@auth0/auth0-react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -12,6 +13,7 @@ const VideoList: React.FC = () => {
   const [showFavorites, setShowFavorites] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(videos);
   const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
@@ -19,7 +21,7 @@ const VideoList: React.FC = () => {
   const fetchMoreVideos = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : undefined;
-      const limit = 10;
+      const limit = 20;
       const response = await fetchVideos(page, limit, searchTerm, showFavorites, token);
 
       if (response.videos.length === 0) {
@@ -36,16 +38,20 @@ const VideoList: React.FC = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchMoreVideos();
-    // Disable body scrolling when this component is mounted
-    document.body.style.overflow = 'hidden';
 
-    // Re-enable body scrolling when this component is unmounted
+  useEffect(() => {
+    setVideos([]);
+    setPage(1);
+    setHasMore(true);
+    setLoading(true);
+
+    // Fetch initial videos
+    fetchMoreVideos();
+    document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [getAccessTokenSilently, isAuthenticated, searchTerm, showFavorites]);
+  }, [searchTerm, showFavorites]);
 
   const toggleFavorite = async (id: string) => {
     try {
@@ -66,6 +72,16 @@ const VideoList: React.FC = () => {
     }
   };
 
+  // Handle form submit for search
+  const handleSearchSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setSearchTerm(searchValue);
+  };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   if (loading && page === 1) {
     return (
       <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -76,32 +92,31 @@ const VideoList: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div
-      onScroll={(e) => {
-        const target = e.target as HTMLElement;
-        if (target.scrollHeight - target.scrollTop === target.clientHeight && hasMore) {
-          fetchMoreVideos();
-        }
-      }}
+      id="scrollableDiv"
       className="overflow-auto h-screen px-4"
       style={{ maxHeight: '100vh' }} // Ensures the container uses the full height of the viewport
     >
-      <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search videos..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 border border-softRed rounded-lg w-1/2"
-        />
+      <div className="flex flex-wrap items-center gap-4 mb-4">
+        <form onSubmit={handleSearchSubmit} className="flex-grow flex">
+          <input
+            type="text"
+            placeholder="Search videos..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            className="p-2 border border-one rounded-lg flex-1"
+          />
+          <button
+            type="submit"
+            className="ml-2 bg-one text-white py-2 px-4 rounded"
+          >
+            Search
+          </button>
+        </form>
 
         <button
-          className="ml-4 bg-softRed text-white py-2 px-4 rounded"
+          className="bg-three text-five py-2 px-4 rounded"
           onClick={() => {
             if (!isAuthenticated) {
               loginWithRedirect();
@@ -114,16 +129,23 @@ const VideoList: React.FC = () => {
         </button>
       </div>
 
-      <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredItems.map((video) => (
-          <VideoCard
-            key={video.id}
-            video={video}
-            toggleFavorite={() => toggleFavorite(video.id)}
-          />
-        ))}
-      </div>
-      {loading && <p>Loading more videos...</p>}
+      <InfiniteScroll
+        dataLength={filteredItems.length}
+        next={fetchMoreVideos}
+        hasMore={hasMore}
+        loader={<p>Loading more videos...</p>}
+        scrollableTarget="scrollableDiv"
+      >
+        <div className="video-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filteredItems.map((video, index) => (
+            <VideoCard
+              key={`${video.id}-${index}`} // Ensures unique keys
+              video={video}
+              toggleFavorite={() => toggleFavorite(video.id)}
+            />
+          ))}
+        </div>
+      </InfiniteScroll>
     </div>
   );
 };

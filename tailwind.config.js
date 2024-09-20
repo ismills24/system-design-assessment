@@ -4,15 +4,14 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}", // Ensure Tailwind scans all files in the src folder
   ],
   theme: {
-    extend: {
       colors: {
-        softRed: '#f08080',
-        softPeach: '#f4978e',
-        softOrange: '#f8ad9d',
-        softPink: '#fbc4ab',
-        pastelPeach: '#ffdab9',
+        one: '#212A31',
+        two: '#2E3944',
+        three: '#124E66',
+        four: '#748D92',
+        five: '#D3D9D4',
+        white: '#ffffff'
       },
-    },
   },
   plugins: [],
 };

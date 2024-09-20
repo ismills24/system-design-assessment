@@ -1,10 +1,16 @@
-// ProfilePage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useProfile from '../hooks/useProfiles';
 
 const ProfilePage: React.FC = () => {
   const { profile, loading, updateProfile } = useProfile();
-  const [displayName, setDisplayName] = useState(profile?.displayName || '');
+  const [displayName, setDisplayName] = useState<string>('');
+
+  // Synchronize displayName with profile data when profile changes
+  useEffect(() => {
+    if (profile && profile.displayName) {
+      setDisplayName(profile.displayName);
+    }
+  }, [profile]);
 
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayName(e.target.value);
@@ -26,7 +32,7 @@ const ProfilePage: React.FC = () => {
       <h2 className="text-2xl font-bold text-softRed mb-4">Update Profile</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-softOrange font-semibold mb-2">Display Name</label>
+          <label className="block text-two font-semibold mb-2">Display Name</label>
           <input
             type="text"
             value={displayName}
@@ -37,7 +43,7 @@ const ProfilePage: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="bg-softRed text-white py-2 px-4 rounded hover:bg-red-600 transition-colors"
+          className="bg-three text-white py-2 px-4 rounded hover:bg-red-600 transition-colors"
         >
           Save Changes
         </button>

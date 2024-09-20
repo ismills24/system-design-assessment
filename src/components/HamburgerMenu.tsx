@@ -29,7 +29,7 @@ const HamburgerMenu: React.FC = () => {
         >
           <Link
             to="/"
-            className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
+            className="block px-4 py-2 text-one hover:bg-two hover:text-white"
             onClick={toggleMenu}
             role="menuitem"
           >
@@ -37,7 +37,7 @@ const HamburgerMenu: React.FC = () => {
           </Link>
           <Link
             to="/profile"
-            className="block px-4 py-2 text-softRed hover:bg-softPeach hover:text-white"
+            className="block px-4 py-2 text-one hover:bg-two hover:text-white"
             onClick={toggleMenu}
             role="menuitem"
           >

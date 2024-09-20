@@ -605,7 +605,7 @@ video {
   background-color: rgb(240 128 128 / var(--tw-bg-opacity));
 }
 
-.bg-softPink {
+.bg-four {
   --tw-bg-opacity: 1;
   background-color: rgb(251 196 171 / var(--tw-bg-opacity));
 }
@@ -645,7 +645,7 @@ video {
   color: rgb(240 128 128 / var(--tw-text-opacity));
 }
 
-.text-softOrange {
+.text-two {
   --tw-text-opacity: 1;
   color: rgb(248 173 157 / var(--tw-text-opacity));
 }

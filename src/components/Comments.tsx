@@ -31,7 +31,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
   }
 
   if (error) {
-    return <p className="text-softRed">{error}</p>;
+    return <p className="text-primary">{error}</p>;
   }
 
   return (
@@ -56,12 +56,12 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
           </button>
         </form>
       ) : (
-        <div className="login-prompt bg-softOrange p-3 rounded-md mt-4">
+        <div className="login-prompt bg-five p-3 rounded-md mt-4">
           <p>
             Please{' '}
             <button
               onClick={() => loginWithRedirect()}
-              className="underline text-softRed"
+              className="underline text-two"
             >
               log in
             </button>{' '}
@@ -74,7 +74,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
         comments.map((comment) => (
           <div key={comment.id} className="comment-card p-4 mb-2 bg-white rounded-lg shadow-sm">
             <div className="comment-content">
-              <p className="comment-author text-softRed font-semibold">
+              <p className="comment-author text-one font-semibold">
                 {comment.User?.auth0Id === currentUserId
                   ? `${comment.User?.displayName || ''} (You)`
                   : comment.User?.displayName || 'Anonymous'}
@@ -83,20 +83,20 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
               <div className="comment-actions flex gap-2 mt-2">
                 <button
                   onClick={() => handleLike(comment.id)}
-                  className="like-button bg-softRed text-white px-2 py-1 rounded"
+                  className="like-button bg-one text-white px-2 py-1 rounded"
                 >
                   👍 {comment.likes}
                 </button>
                 <button
                   onClick={() => handleDislike(comment.id)}
-                  className="dislike-button bg-softRed text-white px-2 py-1 rounded"
+                  className="dislike-button bg-one text-white px-2 py-1 rounded"
                 >
                   👎 {comment.dislikes}
                 </button>
                 {comment.User?.auth0Id === currentUserId && (
                   <button
                     onClick={() => handleDelete(comment.id)}
-                    className="delete-button bg-softOrange text-white px-2 py-1 rounded ml-auto"
+                    className="delete-button bg-two text-white px-2 py-1 rounded ml-auto"
                   >
                     Delete
                   </button>
@@ -106,7 +106,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
           </div>
         ))
       ) : (
-        <p className="text-softOrange">No comments yet. Be the first to comment!</p>
+        <p className="text-two">No comments yet. Be the first to comment!</p>
       )}
     </div>
   );
