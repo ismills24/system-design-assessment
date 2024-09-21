@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { fetchComments, postComment, likeComment, dislikeComment, deleteComment } from '../services/commentService';
 import { useAuth0 } from '@auth0/auth0-react';
 
-// Define the Comment and User types
 interface User {
   displayName: string;
   auth0Id: string;
@@ -14,10 +13,9 @@ interface Comment {
   content: string;
   likes: number;
   dislikes: number;
-  User?: User; // User is optional because some comments might not have user data
+  User?: User;
 }
 
-// Define the return type of the hook
 interface UseCommentsReturn {
   comments: Comment[];
   loading: boolean;

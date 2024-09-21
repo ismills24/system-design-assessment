@@ -24,7 +24,6 @@ video {
   @apply rounded-lg shadow-lg;
 }
 
-/* Loading Spinner */
 .spinner {
   display: inline-block;
   width: 40px;
@@ -40,6 +39,10 @@ video {
     transform: rotate(360deg);
   }
 }
+.videoCard:hover{
+  /* transform:scale(1.04); */
+}
+
 .hamburger-dropdown {
   position: absolute;
   right: 0;
@@ -64,7 +67,7 @@ video {
 .comments-section {
   margin-top: 24px;
   padding: 16px;
-  background-color: theme('colors.five');
+  background-color: theme('colors.two');
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -75,7 +78,7 @@ video {
   flex-direction: column;
   margin-bottom: 16px;
   padding: 12px;
-  background-color: theme('colors.four');
+  background-color: theme('colors.five');
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }

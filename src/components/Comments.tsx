@@ -36,7 +36,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
 
   return (
     <div className="comments-section">
-      <h3 className="text-2xl font-semibold mb-4">Comments</h3>
+      <h3 className="text-2xl font-semibold text-five mb-4">Comments</h3>
 
       {isAuthenticated ? (
         <form onSubmit={handleCommentSubmit} className="comment-form">

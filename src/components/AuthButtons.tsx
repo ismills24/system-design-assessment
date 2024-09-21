@@ -12,14 +12,14 @@ const AuthButtons: React.FC = () => {
                     logoutParams: { returnTo: window.location.origin },
                 })
             }
-            className="block px-4 py-2 text-one hover:bg-one hover:text-white"
+            className="block px-4 py-2 text-three hover:bg-three hover:text-white"
         >
             Logout
         </a>
     ) : (
         <a
             onClick={() => loginWithRedirect()}
-            className="block px-4 py-2 text-one hover:bg-one hover:text-white"
+            className="block px-4 py-2 text-three hover:bg-three hover:text-white"
         >
             Login
         </a>
