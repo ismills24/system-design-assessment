@@ -43,6 +43,14 @@ const HamburgerMenu: React.FC = () => {
           >
             Profile
           </Link>
+          <Link
+            to="/upload"
+            className="block px-4 py-2 text-one hover:bg-three hover:text-white"
+            onClick={toggleMenu}
+            role="menuitem"
+          >
+            Upload a Video
+          </Link>
           <AuthButtons /> {/* Ensure this renders Login/Logout correctly */}
         </div>
       )}

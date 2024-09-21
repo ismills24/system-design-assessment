@@ -4,6 +4,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import VideoPlayer from './pages/VideoPlayer';
 import ProfilePage from './pages/ProfilePage';
+import UploadVideoPage from './pages/UploadVideoPage';
 import HamburgerMenu from './components/HamburgerMenu';
 import logo from './assets/logo.png';
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/videos/:id" element={<VideoPlayer />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/upload" element={<UploadVideoPage />} />
         </Routes>
       </main>
     </div>
