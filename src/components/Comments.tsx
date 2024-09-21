@@ -106,7 +106,7 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
           </div>
         ))
       ) : (
-        <p className="text-two">No comments yet. Be the first to comment!</p>
+        <p className="text-five">No comments yet. Be the first to comment!</p>
       )}
     </div>
   );
