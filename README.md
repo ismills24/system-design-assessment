@@ -24,7 +24,7 @@ Business Context: Designed to support 20,000 to 50,000 Daily Active Users, prima
 
 - **/videos/**: Get a list of videos, get information about a specific video - likes, comments, views etc.,  upload a video, leave a comment
 - **/comments/**: Like/dislike a comment, delete one of your comments
-- ***/users/**: Update your profile information, subscribe to a user
+- **/users/**: Update your profile information, subscribe to a user
   
 Detailed API Spec:
 See my prototpye API here: [vention-interview-api](https://github.com/ismills24/vention-interview-api)
@@ -46,7 +46,7 @@ In short, the SoftServe prototype represents a complete, end to end system. A us
 
 <hr/>
 
-### Section 2: Prototype
+## Section 2: Prototype
 
 Welcome to the frontend repository for **SoftServe**, a video streaming platform built with React and TypeScript, styled with TailwindCSS. This frontend interacts with a backend API for user authentication, video streaming, uploading and comment management. The platform allows users to browse, watch, upload and interact with videos, including commenting, liking/disliking, and favoriting content. 
 - A live version of the app can be found hosted on [Vercel](https://system-design-assessment-taupe.vercel.app/)
