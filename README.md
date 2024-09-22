@@ -8,7 +8,7 @@ Objective: Design a YouTube-like video streaming platform with a focus on core f
 Business Context: Designed to support 20,000 to 50,000 Daily Active Users, primarily in Canada and Europe, within a 6-month development timeframe and a small team.
 
 ### 2. Proposed Architecture
-####System Diagram:
+#### System Diagram:
 
 ![Architecture Diagram](https://github.com/user-attachments/assets/dc66a1a6-302a-42e1-b2af-c1761fb35b3d)
 
@@ -45,8 +45,11 @@ In short, the SoftServe prototype represents a complete, end to end system. A us
 - ***Misc***: Ultimately, this was a very fast prototype and much stands to be optimized. Examples would be optimizing database queries, implementing lazy loading for our image thumbnails etc.
 
 <hr/>
+## Section 2: Prototype
 
-Welcome to the frontend repository for **SoftServe**, a video streaming platform built with React and TypeScript, styled with TailwindCSS. This frontend interacts with a backend API for user authentication, video streaming, uploading and comment management. The platform allows users to browse, watch, upload and interact with videos, including commenting, liking/disliking, and favoriting content.
+Welcome to the frontend repository for **SoftServe**, a video streaming platform built with React and TypeScript, styled with TailwindCSS. This frontend interacts with a backend API for user authentication, video streaming, uploading and comment management. The platform allows users to browse, watch, upload and interact with videos, including commenting, liking/disliking, and favoriting content. 
+- A live version of the app can be found hosted on [Vercel](https://system-design-assessment-taupe.vercel.app/)
+- The backend repo can be found on [Github](https://github.com/ismills24/vention-interview-api) and a live version is hosted on [render.com](https://render.com/)
 
 ## Features
 
@@ -56,9 +59,6 @@ Welcome to the frontend repository for **SoftServe**, a video streaming platform
 - **Comments**: Users can view, post, like, dislike, and delete comments.
 - **Favorites**: Favorite and unfavorite videos, with a toggle to view favorited content.
 - **Profile Management**: Users can update their display names.
-
-## System Architecture
-
 
 ## Technologies Used
 
