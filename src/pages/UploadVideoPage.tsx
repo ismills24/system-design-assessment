@@ -1,4 +1,3 @@
-// UploadVideoPage.tsx
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
@@ -10,7 +9,7 @@ const UploadVideoPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false); // New state to track if the message is an error
+  const [isError, setIsError] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -25,7 +24,7 @@ const UploadVideoPage: React.FC = () => {
       video.muted = true;
 
       video.addEventListener('loadeddata', () => {
-        video.currentTime = 1; // Capture the first second frame
+        video.currentTime = 1; // Capture the first second frame for the thumbnail
       });
 
       video.addEventListener('seeked', () => {
@@ -70,17 +69,14 @@ const UploadVideoPage: React.FC = () => {
       setUploading(true);
       const token = await getAccessTokenSilently();
 
-      // Extract thumbnail
       const thumbnailBlob = await extractThumbnail(file);
 
-      // Prepare the form data
       const formData = new FormData();
       formData.append('file', file);
       formData.append('title', title);
       formData.append('description', description);
       formData.append('thumbnail', thumbnailBlob, 'thumbnail.jpg');
 
-      // Send a POST request to the backend upload endpoint
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/videos/upload`,
         formData,

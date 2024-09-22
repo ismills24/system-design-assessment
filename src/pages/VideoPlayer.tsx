@@ -1,4 +1,3 @@
-// VideoPlayer.tsx
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Comments from '../components/Comments';
@@ -11,13 +10,13 @@ const VideoPlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { video, loading, error, refetchVideo } = useVideos(id!);
   const [progress, setProgress] = useState<number>(0);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false); // Local state for favorite status
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
 
   useEffect(() => {
     if (video) {
-      setIsFavorite(video.isFavorite ?? false); // Ensure isFavorite is always a boolean
+      setIsFavorite(video.isFavorite ?? false);
     }
   }, [video]);
 
@@ -39,7 +38,7 @@ const VideoPlayer: React.FC = () => {
       const token = await getAccessTokenSilently();
       await toggleFavoriteVideo(id!, token);
       setIsFavorite((prev) => !prev); // Toggle the UI state immediately
-      refetchVideo(); // Refetch the video to get the latest favorite status from the server
+      refetchVideo();
     } catch (error) {
       console.error('Failed to update favorite status:', error);
     }
