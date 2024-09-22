@@ -23,7 +23,7 @@ const VideoList: React.FC = () => {
       return;
     }
 
-    // Reset state when dependencies change
+    // Reset state
     setVideos([]);
     setPage(1);
     setHasMore(true);

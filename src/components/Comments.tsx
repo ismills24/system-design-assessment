@@ -12,7 +12,6 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
   const { comments, loading, error, addComment, handleLike, handleDislike, handleDelete } = useComments(videoId);
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
   const currentUserId = user?.sub;
-
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewComment(event.target.value);
   };
@@ -83,13 +82,13 @@ const Comments: React.FC<CommentsProps> = ({ videoId }) => {
               <div className="comment-actions flex gap-2 mt-2">
                 <button
                   onClick={() => handleLike(comment.id)}
-                  className="like-button bg-one text-white px-2 py-1 rounded"
+                  className="like-button bg-one text-one px-2 py-1 rounded"
                 >
                   👍 {comment.likes}
                 </button>
                 <button
                   onClick={() => handleDislike(comment.id)}
-                  className="dislike-button bg-one text-white px-2 py-1 rounded"
+                  className="dislike-button bg-one text-one px-2 py-1 rounded"
                 >
                   👎 {comment.dislikes}
                 </button>

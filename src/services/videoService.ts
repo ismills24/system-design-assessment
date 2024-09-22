@@ -12,7 +12,7 @@ export interface Video {
   videoUrl: string;
   isFavorite?: boolean;
 }
-// Fetch a specific video by ID
+
 export const fetchVideoById = async (id: string, token?: string) => {
   const config = token
     ? {
@@ -26,7 +26,6 @@ export const fetchVideoById = async (id: string, token?: string) => {
   return response.data;
 };
 
-// Fetch paginated videos with optional search and filter parameters
 export const fetchVideos = async (
   page: number,
   limit: number,
@@ -60,7 +59,6 @@ const params = {
   return response.data;
 };
 
-// Fetch user's favorite videos
 export const fetchFavoriteVideos = async (token: string) => {
   const response = await axios.get(`${API_URL}/api/videos/favorites`, {
     headers: {
@@ -70,7 +68,6 @@ export const fetchFavoriteVideos = async (token: string) => {
   return response.data;
 };
 
-// Toggle favorite status for a video
 export const toggleFavoriteVideo = async (id: string, token: string) => {
   await axios.post(`${API_URL}/api/videos/${id}/favorite`, {}, {
     headers: {

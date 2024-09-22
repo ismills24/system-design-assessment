@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import AuthButtons from './AuthButtons';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
+  const { isAuthenticated } = useAuth0();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -35,23 +36,23 @@ const HamburgerMenu: React.FC = () => {
           >
             Home
           </Link>
-          <Link
+          {isAuthenticated && (<Link
             to="/profile"
             className="block px-4 py-2 text-one hover:bg-three hover:text-white"
             onClick={toggleMenu}
             role="menuitem"
           >
             Profile
-          </Link>
-          <Link
+          </Link>)}
+          {isAuthenticated && (<Link
             to="/upload"
             className="block px-4 py-2 text-one hover:bg-three hover:text-white"
             onClick={toggleMenu}
             role="menuitem"
           >
             Upload a Video
-          </Link>
-          <AuthButtons /> {/* Ensure this renders Login/Logout correctly */}
+          </Link>)}
+          <AuthButtons />
         </div>
       )}
     </div>

@@ -1,9 +1,7 @@
-// services/commentService.ts
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Define interfaces for types
 export interface Comment {
   id: string;
   content: string;

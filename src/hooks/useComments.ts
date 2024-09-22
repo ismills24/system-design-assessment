@@ -1,4 +1,3 @@
-// hooks/useComments.ts
 import { useState, useEffect } from 'react';
 import { fetchComments, postComment, likeComment, dislikeComment, deleteComment } from '../services/commentService';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -32,7 +31,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
   const [error, setError] = useState<string | null>(null);
   const { getAccessTokenSilently, user } = useAuth0();
 
-  // Load comments from the backend
   const loadComments = async () => {
     try {
       setLoading(true);
@@ -45,7 +43,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
     }
   };
 
-  // Add a new comment
   const addComment = async (content: string) => {
     try {
       const token = await getAccessTokenSilently();
@@ -56,7 +53,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
     }
   };
 
-  // Handle liking a comment
   const handleLike = async (commentId: string) => {
     try {
       const token = await getAccessTokenSilently();
@@ -69,7 +65,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
     }
   };
 
-  // Handle disliking a comment
   const handleDislike = async (commentId: string) => {
     try {
       const token = await getAccessTokenSilently();
@@ -82,7 +77,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
     }
   };
 
-  // Handle deleting a comment
   const handleDelete = async (commentId: string) => {
     try {
       const token = await getAccessTokenSilently();
@@ -93,7 +87,6 @@ export const useComments = (videoId: string): UseCommentsReturn => {
     }
   };
 
-  // Load comments when the video ID changes
   useEffect(() => {
     loadComments();
   }, [videoId]);

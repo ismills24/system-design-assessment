@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import ProgressBar from './ProgressBar'; // Import the ProgressBar component
+import ProgressBar from './ProgressBar';
 
 type VideoCardProps = {
   video: {
     id: string;
     title: string;
     thumbnail: string;
-    videoUrl: string; // Add video URL for preview
+    videoUrl: string;
     views: number;
     isFavorite?: boolean;
   };
@@ -18,60 +18,57 @@ type VideoCardProps = {
 const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0); // Progress state for the progress bar
+  const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const hoverTimeoutRef = useRef<number | null>(null);
 
-  // Function to update progress based on video's current time
   const updateProgress = () => {
     const videoElement = videoRef.current;
     if (videoElement) {
       const currentTime = videoElement.currentTime;
-      const duration = videoElement.duration || 1; // Prevent division by zero
+      const duration = videoElement.duration || 1;
       setProgress((currentTime / duration) * 100);
     }
   };
 
-  // Handle video playback and event listeners based on isPlaying state
+  // messy function to handle playback/event listeners TD: untangle the eventlistener problem
   useEffect(() => {
     const videoElement = videoRef.current;
 
     if (!videoElement) return;
 
+    const handlePlayError = (error: any) => {
+      console.error('Error playing video:', error);
+    };
+
     if (isPlaying) {
-      // Start playing video and add event listener
-      videoElement.play();
+      videoElement.play().catch(handlePlayError);
       videoElement.addEventListener('timeupdate', updateProgress);
     } else {
-      // Pause video and reset progress
       videoElement.pause();
       videoElement.currentTime = 0;
       setProgress(0);
       videoElement.removeEventListener('timeupdate', updateProgress);
     }
 
-    // Cleanup in case the component unmounts
+    // cleanup
     return () => {
+      videoElement.pause();
+      videoElement.currentTime = 0;
       videoElement.removeEventListener('timeupdate', updateProgress);
     };
   }, [isPlaying]);
 
-  // Function to handle mouse enter with delay
   const handleMouseEnter = () => {
     setIsHovered(true);
-
-    // Set a delay before starting the video playback
     hoverTimeoutRef.current = window.setTimeout(() => {
       setIsPlaying(true);
     }, 250); // 250ms delay before playback starts
   };
 
-  // Function to handle mouse leave and clear the delay
   const handleMouseLeave = () => {
     setIsHovered(false);
     setIsPlaying(false);
-
-    // Clear the timeout if the user stops hovering before the delay
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
@@ -111,7 +108,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, toggleFavorite }) => {
       </Link>
       <button
         onClick={(e) => {
-          e.preventDefault(); // Prevent navigation when clicking the favorite button
+          e.preventDefault();
           toggleFavorite();
         }}
         className="absolute top-2 right-2 text-three text-xl"

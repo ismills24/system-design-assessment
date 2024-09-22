@@ -1,4 +1,3 @@
-// components/AuthButtons.tsx
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -12,14 +11,14 @@ const AuthButtons: React.FC = () => {
                     logoutParams: { returnTo: window.location.origin },
                 })
             }
-            className="block px-4 py-2 text-three hover:bg-three hover:text-white"
+            className="block px-4 py-2 text-four hover:bg-three hover:text-white"
         >
             Logout
         </a>
     ) : (
         <a
             onClick={() => loginWithRedirect()}
-            className="block px-4 py-2 text-three hover:bg-three hover:text-white"
+            className="block px-4 py-2 text-four hover:bg-three hover:text-white"
         >
             Login
         </a>

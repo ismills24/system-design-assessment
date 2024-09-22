@@ -6,8 +6,6 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-
-// Wrapper to access the navigate function
 const AuthProviderWithNavigate = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 

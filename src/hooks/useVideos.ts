@@ -17,7 +17,7 @@ interface Video {
   description: string;
   videoUrl: string;
   comments: Comment[];
-  isFavorite?: boolean; // Assuming that the video object has an isFavorite field
+  isFavorite?: boolean;
 }
 
 export const useVideos = (id: string) => {
@@ -26,7 +26,6 @@ export const useVideos = (id: string) => {
   const [error, setError] = useState<string | null>(null);
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
-  // Create a refetch function that can be called externally to refetch the video
   const fetchVideo = useCallback(async () => {
     setLoading(true);
     try {
@@ -37,7 +36,7 @@ export const useVideos = (id: string) => {
 
       const fetchedVideo = await fetchVideoById(id, token);
       setVideo(fetchedVideo);
-      setError(null); // Clear previous errors if fetch is successful
+      setError(null);
     } catch (err) {
       console.error('Failed to fetch video:', err);
       setError('Failed to load video.');
@@ -46,7 +45,6 @@ export const useVideos = (id: string) => {
     }
   }, [id, getAccessTokenSilently, isAuthenticated]);
 
-  // Fetch video on initial mount
   useEffect(() => {
     fetchVideo();
   }, [fetchVideo]);
