@@ -12,14 +12,14 @@ Business Context: Designed to support 20,000 to 50,000 Daily Active Users, prima
 
 ![Architecture Diagram](https://github.com/user-attachments/assets/dc66a1a6-302a-42e1-b2af-c1761fb35b3d)
 
-####Languages and Technologies Used:
+#### Languages and Technologies Used:
 
 - **Frontend**: React, TypeScript, TailwindCSS for styling, Auth0 for authentication.
 - **Backend**: Node.js with Express, PostgreSQL for data storage, Cloudflare R2 for video storage.
 - **Future Considerations**: CDN integration, video transcoding, redis and microservices separation for scaling.
   
 ### 3. API Specification
-####Endpoints Overview:
+#### Endpoints Overview:
   In my design, the API contains three major routes containing various endpoints each:
 
 - **/videos/**: Get a list of videos, get information about a specific video - likes, comments, views etc.,  upload a video, leave a comment
