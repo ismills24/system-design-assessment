@@ -45,13 +45,14 @@ In short, the SoftServe prototype represents a complete, end to end system. A us
 - ***Misc***: Ultimately, this was a very fast prototype and much stands to be optimized. Examples would be optimizing database queries, implementing lazy loading for our image thumbnails etc.
 
 <hr/>
-## Section 2: Prototype
+
+### Section 2: Prototype
 
 Welcome to the frontend repository for **SoftServe**, a video streaming platform built with React and TypeScript, styled with TailwindCSS. This frontend interacts with a backend API for user authentication, video streaming, uploading and comment management. The platform allows users to browse, watch, upload and interact with videos, including commenting, liking/disliking, and favoriting content. 
 - A live version of the app can be found hosted on [Vercel](https://system-design-assessment-taupe.vercel.app/)
 - The backend repo can be found on [Github](https://github.com/ismills24/vention-interview-api) and a live version is hosted on [render.com](https://render.com/)
 
-## Features
+#### Features
 
 - **Video Uploading**: Upload a video file
 - **Video Streaming**: Watch videos with playback controls.
@@ -60,7 +61,7 @@ Welcome to the frontend repository for **SoftServe**, a video streaming platform
 - **Favorites**: Favorite and unfavorite videos, with a toggle to view favorited content.
 - **Profile Management**: Users can update their display names.
 
-## Technologies Used
+#### Technologies Used
 
 - **React**: Frontend framework
 - **TypeScript**: Type-safe JavaScript
@@ -70,7 +71,7 @@ Welcome to the frontend repository for **SoftServe**, a video streaming platform
 - **TailwindCSS**: Utility-first CSS framework
 - **ESLint & Prettier**: Code linting and formatting
 
-## Project Structure
+#### Project Structure
 
 ```bash
 src/
